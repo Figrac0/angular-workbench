@@ -28,6 +28,10 @@ yarn-error.log
 !.vscode/extensions.json
 .history/*
 
+# Claude Code
+.claude/
+.claude.*
+
 # Miscellaneous
 /.angular/cache
 .sass-cache/
