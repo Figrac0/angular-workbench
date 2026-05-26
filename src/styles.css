@@ -3,19 +3,24 @@
 }
 
 html {
-  height: 100%;
+  min-height: 100%;
+  background-color: #0b0519;
 }
 
 body {
   font-family: "Poppins", sans-serif;
-  background:
+  background-color: #0b0519;
+  background-image:
     radial-gradient(ellipse at 15% 10%, rgba(89, 32, 145, 0.35) 0%, transparent 45%),
     radial-gradient(ellipse at 85% 85%, rgba(153, 101, 221, 0.18) 0%, transparent 50%),
-    radial-gradient(circle at top left, #181023, #0b0519);
+    linear-gradient(180deg, #181023 0%, #0b0519 100%);
+  background-size: 100% 100vh, 100% 100vh, 100% 100vh;
+  background-position: 0 0, 0 0, 0 0;
+  background-repeat: repeat-y, repeat-y, repeat-y;
   color: #c3b3d8;
   margin: 0;
   padding: 0;
-  min-height: 100%;
+  min-height: 100vh;
 }
 
 /* Custom scrollbar – global */
