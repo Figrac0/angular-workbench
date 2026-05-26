@@ -15,6 +15,18 @@
 
 ---
 
+<div align="center">
+  <a href="https://angular-workbench-v1.vercel.app/" target="_blank">
+    <img
+      src="https://github.com/Figrac0/Figrac0/blob/main/href.svg"
+      alt="Quick Access - Visit Site"
+      width="50%"
+    />
+  </a>
+</div>
+
+---
+
 ## Overview
 
 EasyTask started as a tiny Angular learning demo (one user list, one task list) and grew into a thought-out internal task panel. It covers the full loop that a small product team actually needs day-to-day:
