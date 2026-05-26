@@ -1,0 +1,42 @@
+<app-modal [title]="heading" (close)="close.emit()">
+  <form (ngSubmit)="submit()" class="form">
+    <div class="field">
+      <label for="t-name">Team name</label>
+      <input id="t-name" name="name" type="text" [(ngModel)]="name" />
+    </div>
+
+    <div class="field">
+      <label for="t-desc">Description</label>
+      <textarea id="t-desc" name="description" rows="3" [(ngModel)]="description"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Accent color</label>
+      <div class="colors">
+        @for (c of colors; track c) {
+          <button
+            type="button"
+            class="swatch"
+            [class.selected]="c === color"
+            [style.background-color]="c"
+            (click)="color = c"
+            [attr.aria-label]="c"
+          ></button>
+        }
+      </div>
+    </div>
+
+    @if (errors.length) {
+      <ul class="errors">
+        @for (e of errors; track e) {
+          <li>{{ e }}</li>
+        }
+      </ul>
+    }
+
+    <div class="actions">
+      <button type="button" class="btn-ghost" (click)="close.emit()">Cancel</button>
+      <button type="submit" class="btn-primary">{{ team ? 'Save changes' : 'Create team' }}</button>
+    </div>
+  </form>
+</app-modal>

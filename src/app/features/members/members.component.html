@@ -1,0 +1,172 @@
+<section class="members">
+  <header class="view-header">
+    <div>
+      <h2>Team members</h2>
+      <p class="subtitle">Manage who's on the team, who they report to, and what they're working on.</p>
+    </div>
+    <button class="btn-primary" (click)="openCreate()">+ Add member</button>
+  </header>
+
+  <div class="toolbar">
+    <input
+      type="text"
+      class="search"
+      placeholder="Search by name or email…"
+      [ngModel]="search()"
+      (ngModelChange)="search.set($event)"
+    />
+    <select
+      class="filter"
+      [ngModel]="teamFilter()"
+      (ngModelChange)="teamFilter.set($event)"
+    >
+      <option value="all">All teams</option>
+      <option value="none">No team</option>
+      @for (t of teamsSvc.teams(); track t.id) {
+        <option [value]="t.id">{{ t.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="layout">
+    <div class="grid">
+      @for (u of filtered(); track u.id) {
+        <app-card>
+          <div
+            class="member"
+            [class.active]="selectedUserId() === u.id"
+            [class.inactive]="!u.active"
+          >
+            <button class="surface" (click)="selectUser(u.id)">
+              <img [src]="avatarPath(u)" [alt]="u.name" />
+              <div class="info">
+                <div class="name-row">
+                  <span class="name">{{ u.name }}</span>
+                  @if (!u.active) { <app-badge variant="neutral">Inactive</app-badge> }
+                </div>
+                <span class="email">{{ u.email }}</span>
+                <div class="tags">
+                  <app-badge variant="tag">{{ roleLabel[u.role] }}</app-badge>
+                  <span class="team-chip" [style.background-color]="teamColor(u.teamId)">
+                    {{ teamName(u.teamId) }}
+                  </span>
+                </div>
+              </div>
+              <div class="count">
+                <span class="num">{{ taskCount(u.id) }}</span>
+                <span class="label">open</span>
+              </div>
+            </button>
+            <div class="actions">
+              <button class="icon-btn" title="Edit" (click)="openEdit(u)">Edit</button>
+              <button class="icon-btn" title="Toggle active" (click)="toggleActive(u)">
+                {{ u.active ? 'Deactivate' : 'Activate' }}
+              </button>
+              <button class="icon-btn danger" title="Remove" (click)="askDelete(u)">Remove</button>
+            </div>
+          </div>
+        </app-card>
+      } @empty {
+        <p class="empty">No members match these filters.</p>
+      }
+    </div>
+
+    @if (selectedUser(); as u) {
+      <aside class="profile">
+        <header>
+          <img [src]="avatarPath(u)" [alt]="u.name" />
+          <div>
+            <h3>{{ u.name }}</h3>
+            <p class="muted">{{ u.email }}</p>
+            <div class="profile-meta">
+              <app-badge variant="tag">{{ roleLabel[u.role] }}</app-badge>
+              <span class="team-chip" [style.background-color]="teamColor(u.teamId)">
+                {{ teamName(u.teamId) }}
+              </span>
+              <span class="muted small">joined {{ u.createdAt | date: 'mediumDate' }}</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="profile-actions">
+          <button class="btn-primary small" (click)="startCreateTask(u)">+ Assign task</button>
+        </div>
+
+        <div class="tasks">
+          <h4>Assigned tasks <span class="muted small">({{ userTasks().length }})</span></h4>
+          @if (userTasks().length) {
+            <ul>
+              @for (t of userTasks(); track t.id) {
+                <li>
+                  <button class="task-row-btn" (click)="openTask(t)">
+                    <span class="title" [class.done]="t.status === 'done'">{{ t.title }}</span>
+                    <span class="row-meta">
+                      <app-badge [variant]="t.status">{{ statusLabel[t.status] }}</app-badge>
+                      <app-badge [variant]="'priority-' + t.priority">{{ priorityLabel[t.priority] }}</app-badge>
+                    </span>
+                  </button>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="empty small">No tasks assigned yet.</p>
+          }
+        </div>
+      </aside>
+    }
+  </div>
+</section>
+
+@if (showForm()) {
+  <app-user-form
+    [user]="editing() ?? undefined"
+    (save)="saveUser($event)"
+    (close)="closeForm()"
+  />
+}
+
+@if (deleting()) {
+  <app-confirm
+    title="Remove member?"
+    [message]="'Remove ' + deleting()!.name + ' from the workspace? Their open tasks will become unassigned.'"
+    confirmLabel="Remove"
+    (confirm)="confirmDelete()"
+    (cancel)="deleting.set(null)"
+  />
+}
+
+@if (viewingTaskId(); as tid) {
+  <app-task-detail
+    [taskId]="tid"
+    (close)="viewingTaskId.set(null)"
+    (edit)="startEditTask($event)"
+    (remove)="askDeleteTask($event)"
+  />
+}
+
+@if (editingTask(); as t) {
+  <app-task-form
+    [task]="t"
+    (save)="saveTaskEdit($event)"
+    (close)="editingTask.set(null)"
+  />
+}
+
+@if (newTaskForUser(); as u) {
+  <app-task-form
+    [defaultAssigneeId]="u.id"
+    [defaultTeamId]="u.teamId"
+    (save)="saveTaskCreate($event)"
+    (close)="newTaskForUser.set(null)"
+  />
+}
+
+@if (deletingTask()) {
+  <app-confirm
+    title="Delete task?"
+    message="This task will be permanently removed."
+    confirmLabel="Delete"
+    (confirm)="confirmDeleteTask()"
+    (cancel)="deletingTask.set(null)"
+  />
+}

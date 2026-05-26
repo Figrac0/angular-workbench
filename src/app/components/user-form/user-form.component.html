@@ -1,0 +1,62 @@
+<app-modal [title]="heading" (close)="close.emit()">
+  <form (ngSubmit)="submit()" class="form">
+    <div class="field">
+      <label for="u-name">Full name</label>
+      <input id="u-name" name="name" type="text" [(ngModel)]="name" />
+    </div>
+
+    <div class="field">
+      <label for="u-email">Email</label>
+      <input id="u-email" name="email" type="email" [(ngModel)]="email" />
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="u-role">Role</label>
+        <select id="u-role" name="role" [(ngModel)]="role">
+          @for (r of roles; track r) {
+            <option [value]="r">{{ roleLabel[r] }}</option>
+          }
+        </select>
+      </div>
+      <div class="field">
+        <label for="u-team">Team</label>
+        <select id="u-team" name="team" [(ngModel)]="teamId">
+          <option [ngValue]="null">— unassigned —</option>
+          @for (t of teams.teams(); track t.id) {
+            <option [ngValue]="t.id">{{ t.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Avatar</label>
+      <div class="avatars">
+        @for (a of avatars; track a) {
+          <button
+            type="button"
+            class="avatar-pick"
+            [class.selected]="a === avatar"
+            (click)="avatar = a"
+          >
+            <img [src]="avatarPath(a)" [alt]="a" />
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (errors.length) {
+      <ul class="errors">
+        @for (e of errors; track e) {
+          <li>{{ e }}</li>
+        }
+      </ul>
+    }
+
+    <div class="actions">
+      <button type="button" class="btn-ghost" (click)="close.emit()">Cancel</button>
+      <button type="submit" class="btn-primary">{{ user ? 'Save changes' : 'Add member' }}</button>
+    </div>
+  </form>
+</app-modal>

@@ -1,0 +1,87 @@
+@if (task(); as t) {
+  <app-modal [title]="t.title" (close)="close.emit()">
+    <div class="detail">
+      <div class="meta">
+        <app-badge [variant]="t.status">{{ statusLabel[t.status] }}</app-badge>
+        <app-badge [variant]="'priority-' + t.priority">{{ priorityLabel[t.priority] }}</app-badge>
+        @if (isOverdue()) {
+          <app-badge variant="overdue">Overdue</app-badge>
+        }
+      </div>
+
+      @if (t.summary) {
+        <p class="summary">{{ t.summary }}</p>
+      } @else {
+        <p class="summary muted">No summary provided.</p>
+      }
+
+      <dl class="props">
+        <div>
+          <dt>Assignee</dt>
+          <dd>{{ assigneeName(t.assigneeId) }}</dd>
+        </div>
+        <div>
+          <dt>Team</dt>
+          <dd>{{ teamName(t.teamId) }}</dd>
+        </div>
+        <div>
+          <dt>Due</dt>
+          <dd>{{ t.dueDate | date: 'mediumDate' }}</dd>
+        </div>
+        <div>
+          <dt>Created</dt>
+          <dd>{{ t.createdAt | date: 'mediumDate' }}</dd>
+        </div>
+      </dl>
+
+      @if (t.tags.length) {
+        <div class="tags">
+          @for (tag of t.tags; track tag) {
+            <app-badge variant="tag">{{ tag }}</app-badge>
+          }
+        </div>
+      }
+
+      <div class="section">
+        <h3>Status</h3>
+        <div class="status-row">
+          @for (s of statuses; track s) {
+            <button
+              type="button"
+              class="status-btn"
+              [class.active]="s === t.status"
+              (click)="setStatus(s)"
+            >
+              {{ statusLabel[s] }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>History <span class="count">{{ t.history.length }}</span></h3>
+        <ul class="history">
+          @for (h of t.history.slice().reverse(); track h.id) {
+            <li>
+              <div class="dot" [attr.data-action]="h.action"></div>
+              <div class="entry">
+                <span class="action">{{ describe(h.action, h.from, h.to) }}</span>
+                <span class="when">
+                  {{ h.at | date: 'medium' }}
+                  @if (h.byUserId) {
+                    · by {{ assigneeName(h.byUserId) }}
+                  }
+                </span>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn-danger" (click)="remove.emit(t)">Delete</button>
+        <button type="button" class="btn-primary" (click)="edit.emit(t)">Edit task</button>
+      </div>
+    </div>
+  </app-modal>
+}

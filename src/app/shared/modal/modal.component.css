@@ -1,0 +1,108 @@
+.modal-root {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(11, 5, 25, 0.78);
+  backdrop-filter: blur(4px);
+  animation: backdrop-in 0.18s ease-out;
+}
+
+.dialog {
+  position: relative;
+  width: 100%;
+  max-width: 36rem;
+  max-height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #3a2c54 0%, #2c1f44 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(195, 179, 216, 0.12);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(153, 101, 221, 0.08);
+  color: #d6c4ec;
+  overflow: hidden;
+  animation: modal-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(195, 179, 216, 0.1);
+  flex-shrink: 0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #e9dcff;
+}
+
+.close {
+  background: transparent;
+  border: none;
+  color: #c3b3d8;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.close:hover {
+  color: #fff;
+  background: rgba(195, 179, 216, 0.1);
+}
+
+.modal-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.modal-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: rgba(11, 5, 25, 0.3);
+  border-radius: 0 12px 12px 0;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #5a4575 0%, #463558 100%);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #9965dd 0%, #6e4d92 100%);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+
+.modal-body {
+  scrollbar-width: thin;
+  scrollbar-color: #5a4575 rgba(11, 5, 25, 0.3);
+}

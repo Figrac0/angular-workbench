@@ -1,0 +1,197 @@
+<section class="board-view">
+  <header class="view-header">
+    <div>
+      <h2>Tasks board</h2>
+      <p class="subtitle">Plan, assign, and ship — across people and teams.</p>
+    </div>
+    <div class="header-actions">
+      <div class="view-toggle">
+        <button [class.active]="view() === 'board'" (click)="view.set('board')">Board</button>
+        <button [class.active]="view() === 'list'" (click)="view.set('list')">List</button>
+      </div>
+      <button class="btn-primary" (click)="showCreate.set(true)">+ New task</button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <input
+      type="text"
+      class="search"
+      placeholder="Search tasks, summaries, tags…"
+      [ngModel]="search()"
+      (ngModelChange)="search.set($event)"
+    />
+    <select [ngModel]="assigneeFilter()" (ngModelChange)="assigneeFilter.set($event)">
+      <option value="all">All assignees</option>
+      <option value="unassigned">Unassigned</option>
+      @for (u of usersSvc.activeUsers(); track u.id) {
+        <option [value]="u.id">{{ u.name }}</option>
+      }
+    </select>
+    <select [ngModel]="teamFilter()" (ngModelChange)="teamFilter.set($event)">
+      <option value="all">All teams</option>
+      <option value="none">No team</option>
+      @for (t of teamsSvc.teams(); track t.id) {
+        <option [value]="t.id">{{ t.name }}</option>
+      }
+    </select>
+    <select [ngModel]="priorityFilter()" (ngModelChange)="priorityFilter.set($event)">
+      <option value="all">Any priority</option>
+      @for (p of priorities; track p) {
+        <option [value]="p">{{ priorityLabel[p] }}</option>
+      }
+    </select>
+    <button class="clear" (click)="clearFilters()">Reset</button>
+  </div>
+
+  @if (view() === 'board') {
+    <div class="columns">
+      @for (col of columns(); track col.status) {
+        <div class="column">
+          <header class="col-header">
+            <app-badge [variant]="col.status">{{ col.label }}</app-badge>
+            <span class="col-count">{{ col.tasks.length }}</span>
+          </header>
+          <ul class="col-list">
+            @for (t of col.tasks; track t.id) {
+              <li class="task-card" [class.overdue]="isOverdue(t)">
+                <button class="card-surface" (click)="viewingId.set(t.id)">
+                  <div class="card-top">
+                    <span class="card-title">{{ t.title }}</span>
+                    <app-badge [variant]="'priority-' + t.priority">{{ priorityLabel[t.priority] }}</app-badge>
+                  </div>
+                  @if (t.summary) {
+                    <p class="card-summary">{{ t.summary }}</p>
+                  }
+                  <div class="card-tags">
+                    @for (tag of t.tags; track tag) {
+                      <app-badge variant="tag">{{ tag }}</app-badge>
+                    }
+                  </div>
+                  <footer class="card-footer">
+                    <div class="people">
+                      @if (assigneeAvatar(t.assigneeId); as av) {
+                        <img [src]="av" [alt]="assigneeName(t.assigneeId)" [title]="assigneeName(t.assigneeId)" />
+                      } @else {
+                        <span class="avatar-empty">?</span>
+                      }
+                      @if (teamColor(t.teamId); as c) {
+                        <span class="team-pill" [style.background-color]="c" [title]="teamName(t.teamId)">
+                          {{ teamName(t.teamId) }}
+                        </span>
+                      }
+                    </div>
+                    <div class="date-row">
+                      <span class="due" [class.overdue-text]="isOverdue(t)">
+                        {{ t.dueDate | date: 'MMM d' }}
+                      </span>
+                      @if (isOverdue(t)) {
+                        <app-badge variant="overdue">Overdue</app-badge>
+                      }
+                    </div>
+                  </footer>
+                </button>
+                <div class="quick-actions">
+                  @if (t.status !== 'done') {
+                    <button (click)="advance(t)" [title]="'Advance to ' + (t.status === 'todo' ? 'In Progress' : t.status === 'in-progress' ? 'Review' : 'Done')">
+                      → {{ t.status === 'todo' ? 'Start' : t.status === 'in-progress' ? 'Review' : 'Done' }}
+                    </button>
+                  } @else {
+                    <button (click)="reopen(t)">↺ Reopen</button>
+                  }
+                </div>
+              </li>
+            } @empty {
+              <li class="empty">No tasks here</li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="list-view">
+      <table>
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Assignee</th>
+            <th>Team</th>
+            <th>Due</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of filtered(); track t.id) {
+            <tr [class.overdue]="isOverdue(t)" (click)="viewingId.set(t.id)">
+              <td>
+                <div class="row-title">{{ t.title }}</div>
+                @if (t.tags.length) {
+                  <div class="row-tags">
+                    @for (tag of t.tags; track tag) {
+                      <app-badge variant="tag">{{ tag }}</app-badge>
+                    }
+                  </div>
+                }
+              </td>
+              <td><app-badge [variant]="t.status">{{ statusLabel[t.status] }}</app-badge></td>
+              <td><app-badge [variant]="'priority-' + t.priority">{{ priorityLabel[t.priority] }}</app-badge></td>
+              <td>{{ assigneeName(t.assigneeId) }}</td>
+              <td>
+                @if (teamColor(t.teamId); as c) {
+                  <span class="team-pill" [style.background-color]="c">{{ teamName(t.teamId) }}</span>
+                } @else {
+                  <span class="muted">—</span>
+                }
+              </td>
+              <td>
+                <span [class.overdue-text]="isOverdue(t)">{{ t.dueDate | date: 'MMM d, y' }}</span>
+              </td>
+              <td class="row-actions" (click)="$event.stopPropagation()">
+                <button (click)="startEdit(t)">Edit</button>
+                <button class="danger" (click)="askDelete(t)">Delete</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="7" class="empty">No tasks match these filters.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+@if (showCreate()) {
+  <app-task-form
+    (save)="saveCreate($event)"
+    (close)="showCreate.set(false)"
+  />
+}
+
+@if (editingTask(); as t) {
+  <app-task-form
+    [task]="t"
+    (save)="saveEdit($event)"
+    (close)="editingTask.set(null)"
+  />
+}
+
+@if (viewingId(); as id) {
+  <app-task-detail
+    [taskId]="id"
+    (close)="viewingId.set(null)"
+    (edit)="startEdit($event)"
+    (remove)="askDelete($event)"
+  />
+}
+
+@if (deleting()) {
+  <app-confirm
+    title="Delete task?"
+    message="This will remove the task and its history permanently."
+    confirmLabel="Delete"
+    (confirm)="confirmDelete()"
+    (cancel)="deleting.set(null)"
+  />
+}

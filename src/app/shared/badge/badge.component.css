@@ -1,0 +1,86 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background-color: rgba(195, 179, 216, 0.15);
+  color: #d6c4ec;
+  border: 1px solid rgba(195, 179, 216, 0.25);
+  white-space: nowrap;
+}
+
+.badge-neutral {
+  background-color: rgba(195, 179, 216, 0.12);
+  color: #c3b3d8;
+}
+
+.badge-todo {
+  background-color: rgba(149, 167, 191, 0.18);
+  color: #b6c8e0;
+  border-color: rgba(149, 167, 191, 0.4);
+}
+
+.badge-in-progress {
+  background-color: rgba(101, 184, 221, 0.2);
+  color: #a8def7;
+  border-color: rgba(101, 184, 221, 0.45);
+}
+
+.badge-review {
+  background-color: rgba(221, 194, 101, 0.2);
+  color: #f1d97b;
+  border-color: rgba(221, 194, 101, 0.45);
+}
+
+.badge-done {
+  background-color: rgba(116, 221, 101, 0.18);
+  color: #b7eaaa;
+  border-color: rgba(116, 221, 101, 0.4);
+}
+
+.badge-priority-low {
+  background-color: rgba(149, 167, 191, 0.15);
+  color: #b6c8e0;
+}
+
+.badge-priority-medium {
+  background-color: rgba(101, 184, 221, 0.2);
+  color: #9bd5f1;
+}
+
+.badge-priority-high {
+  background-color: rgba(221, 138, 101, 0.22);
+  color: #f5b598;
+  border-color: rgba(221, 138, 101, 0.45);
+}
+
+.badge-priority-urgent {
+  background-color: rgba(221, 101, 146, 0.25);
+  color: #ffb1ca;
+  border-color: rgba(221, 101, 146, 0.5);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+.badge-overdue {
+  background-color: rgba(221, 101, 101, 0.25);
+  color: #ffb2b2;
+  border-color: rgba(221, 101, 101, 0.55);
+}
+
+.badge-tag {
+  background-color: rgba(153, 101, 221, 0.18);
+  color: #d4bdef;
+  border-color: rgba(153, 101, 221, 0.4);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(221, 101, 146, 0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(221, 101, 146, 0); }
+}

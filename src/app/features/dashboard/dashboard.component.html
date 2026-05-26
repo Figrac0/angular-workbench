@@ -1,0 +1,124 @@
+<section class="dashboard">
+  <header class="view-header">
+    <div>
+      <h2>Dashboard</h2>
+      <p class="subtitle">A quick read of the work flowing through your teams.</p>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat-card">
+      <span class="stat-label">Total tasks</span>
+      <span class="stat-value">{{ stats().total }}</span>
+    </div>
+    <div class="stat-card accent-blue">
+      <span class="stat-label">In progress</span>
+      <span class="stat-value">{{ stats().inProgress }}</span>
+    </div>
+    <div class="stat-card accent-yellow">
+      <span class="stat-label">In review</span>
+      <span class="stat-value">{{ stats().review }}</span>
+    </div>
+    <div class="stat-card accent-green">
+      <span class="stat-label">Completed</span>
+      <span class="stat-value">{{ stats().done }}</span>
+    </div>
+    <div class="stat-card accent-red">
+      <span class="stat-label">Overdue</span>
+      <span class="stat-value">{{ stats().overdue }}</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <article class="panel">
+      <header class="panel-header">
+        <h3>Upcoming deadlines</h3>
+        <span class="muted">Next 5 open tasks</span>
+      </header>
+      @if (upcoming().length) {
+        <ul class="task-list">
+          @for (t of upcoming(); track t.id) {
+            <li>
+              <div class="task-row">
+                <span class="title">{{ t.title }}</span>
+                <span class="meta">
+                  <app-badge [variant]="t.status">{{ statusLabel[t.status] }}</app-badge>
+                  <app-badge [variant]="'priority-' + t.priority">{{ priorityLabel[t.priority] }}</app-badge>
+                  @if (isOverdue(t)) {
+                    <app-badge variant="overdue">Overdue</app-badge>
+                  }
+                </span>
+              </div>
+              <div class="task-sub">
+                <span>{{ assigneeName(t.assigneeId) }}</span>
+                <span>·</span>
+                <span>{{ t.dueDate | date: 'mediumDate' }}</span>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty">Nothing on the horizon. 🎉</p>
+      }
+    </article>
+
+    <article class="panel">
+      <header class="panel-header">
+        <h3>Team load</h3>
+        <span class="muted">Open vs total per team</span>
+      </header>
+      @if (teamLoad().length) {
+        <ul class="team-list">
+          @for (row of teamLoad(); track row.team.id) {
+            <li>
+              <div class="team-row">
+                <span class="team-name">
+                  <span class="dot" [style.background-color]="row.team.color"></span>
+                  {{ row.team.name }}
+                </span>
+                <span class="counts">{{ row.open }} open · {{ row.members }} members</span>
+              </div>
+              <div class="progress">
+                <div
+                  class="progress-bar"
+                  [style.width]="row.total ? (100 * (row.total - row.open) / row.total) + '%' : '0%'"
+                  [style.background-color]="row.team.color"
+                ></div>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty">No teams yet — create one to start grouping work.</p>
+      }
+    </article>
+
+    <article class="panel">
+      <header class="panel-header">
+        <h3>Recently completed</h3>
+        <span class="muted">Last 5 finished tasks</span>
+      </header>
+      @if (recentlyCompleted().length) {
+        <ul class="task-list">
+          @for (t of recentlyCompleted(); track t.id) {
+            <li>
+              <div class="task-row">
+                <span class="title done">{{ t.title }}</span>
+                <span class="meta">
+                  <app-badge variant="done">Done</app-badge>
+                </span>
+              </div>
+              <div class="task-sub">
+                <span>{{ assigneeName(t.assigneeId) }}</span>
+                <span>·</span>
+                <span>{{ t.completedAt | date: 'mediumDate' }}</span>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty">Nothing finished yet — close out a task to see it here.</p>
+      }
+    </article>
+  </div>
+</section>

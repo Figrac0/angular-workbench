@@ -1,0 +1,68 @@
+<section class="teams">
+  <header class="view-header">
+    <div>
+      <h2>Teams</h2>
+      <p class="subtitle">Group people into squads, point team-wide work at them, and keep load visible.</p>
+    </div>
+    <button class="btn-primary" (click)="openCreate()">+ New team</button>
+  </header>
+
+  <div class="grid">
+    @for (row of rows(); track row.team.id) {
+      <article class="team-card">
+        <div class="accent" [style.background-color]="row.team.color"></div>
+        <header>
+          <h3>{{ row.team.name }}</h3>
+          <div class="badges">
+            <app-badge variant="tag">{{ row.members.length }} {{ row.members.length === 1 ? 'member' : 'members' }}</app-badge>
+            <app-badge variant="in-progress">{{ row.open }} open</app-badge>
+            @if (row.overdue) {
+              <app-badge variant="overdue">{{ row.overdue }} overdue</app-badge>
+            }
+          </div>
+        </header>
+
+        @if (row.team.description) {
+          <p class="desc">{{ row.team.description }}</p>
+        }
+
+        <div class="avatars-row">
+          @for (m of row.members.slice(0, 6); track m.id) {
+            <img [src]="avatarPath(m.avatar)" [alt]="m.name" [title]="m.name" />
+          }
+          @if (row.members.length > 6) {
+            <span class="more">+{{ row.members.length - 6 }}</span>
+          }
+          @if (!row.members.length) {
+            <span class="empty">No members yet</span>
+          }
+        </div>
+
+        <footer>
+          <button class="btn-ghost" (click)="openEdit(row.team)">Edit</button>
+          <button class="btn-ghost danger" (click)="askDelete(row.team)">Delete</button>
+        </footer>
+      </article>
+    } @empty {
+      <p class="placeholder">No teams yet — create one to start grouping work.</p>
+    }
+  </div>
+</section>
+
+@if (showForm()) {
+  <app-team-form
+    [team]="editing() ?? undefined"
+    (save)="save($event)"
+    (close)="closeForm()"
+  />
+}
+
+@if (deleting()) {
+  <app-confirm
+    title="Delete team?"
+    [message]="'Delete ' + deleting()!.name + '? Members will become unassigned and team tasks will lose their team link.'"
+    confirmLabel="Delete"
+    (confirm)="confirmDelete()"
+    (cancel)="deleting.set(null)"
+  />
+}

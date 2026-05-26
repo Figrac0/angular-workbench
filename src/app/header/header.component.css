@@ -1,43 +1,177 @@
 header {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  width: 90%;
-  max-width: 50rem;
+  width: 92%;
+  max-width: 72rem;
   margin: 0 auto 2rem auto;
   text-align: center;
-  background: linear-gradient(
-    to bottom,
-    #2c0a4c,
-    #450d80
-  );
-  padding: 1rem;
-  border-bottom-right-radius: 12px;
-  border-bottom-left-radius: 12px;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+  background:
+    linear-gradient(135deg, #2c0a4c 0%, #3c0d6e 50%, #450d80 100%);
+  background-size: 200% 200%;
+  padding: 1.5rem 1rem;
+  border-bottom-right-radius: 16px;
+  border-bottom-left-radius: 16px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  animation: gradient-shift 18s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Decorative animated orbs in the background */
+.aurora {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.orb {
+  position: absolute;
+  width: 18rem;
+  height: 18rem;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+  animation: orb-float 16s ease-in-out infinite;
+}
+
+.orb-1 {
+  background: radial-gradient(circle, #9965dd 0%, transparent 70%);
+  top: -8rem;
+  left: -4rem;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  background: radial-gradient(circle, #dd6592 0%, transparent 70%);
+  top: -6rem;
+  right: -4rem;
+  animation-delay: -5s;
+}
+
+.orb-3 {
+  background: radial-gradient(circle, #65b8dd 0%, transparent 70%);
+  bottom: -10rem;
+  left: 40%;
+  width: 22rem;
+  height: 22rem;
+  animation-delay: -10s;
+}
+
+@keyframes orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(2rem, 1rem) scale(1.1); }
+  66% { transform: translate(-1.5rem, -0.5rem) scale(0.95); }
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: float 4.5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.logo-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #9965dd, #dd6592, #65b8dd, #9965dd);
+  filter: blur(10px);
+  opacity: 0.55;
+  animation: spin 6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 img {
+  position: relative;
   width: 3.5rem;
   object-fit: contain;
+  border-radius: 50%;
+  background: rgba(11, 5, 25, 0.55);
+  padding: 0.25rem;
+  z-index: 1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
+.title-block { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+
 h1 {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   margin: 0;
   padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  letter-spacing: 0.02em;
+}
+
+.brand {
+  background: linear-gradient(90deg, #fff 0%, #e9dcff 35%, #c891ff 70%, #fff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 5s linear infinite;
+  font-weight: 700;
+}
+
+@keyframes shine {
+  to { background-position: 200% center; }
+}
+
+.badge-pill {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  color: #f0e3ff;
+  backdrop-filter: blur(4px);
 }
 
 p {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  color: rgba(232, 220, 255, 0.78);
   text-wrap: balance;
+  max-width: 32rem;
 }
 
 @media (min-width: 768px) {
   header {
-    padding: 2rem;
+    padding: 2.5rem 2rem 2.25rem;
   }
 
   img {
@@ -45,8 +179,20 @@ p {
   }
 
   h1 {
-    font-size: 1.5rem;
-    margin: 0;
-    padding: 0;
+    font-size: 2rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  header,
+  .orb,
+  .logo-wrap,
+  .logo-ring,
+  .brand {
+    animation: none;
   }
 }

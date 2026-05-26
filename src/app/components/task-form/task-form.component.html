@@ -1,0 +1,72 @@
+<app-modal [title]="heading" (close)="close.emit()">
+  <form (ngSubmit)="submit()" class="form">
+    <div class="field">
+      <label for="title">Title</label>
+      <input id="title" type="text" name="title" [(ngModel)]="title" autofocus />
+    </div>
+
+    <div class="field">
+      <label for="summary">Summary</label>
+      <textarea id="summary" name="summary" rows="4" [(ngModel)]="summary"></textarea>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="dueDate">Due date</label>
+        <input id="dueDate" type="date" name="dueDate" [(ngModel)]="dueDate" />
+      </div>
+      <div class="field">
+        <label for="priority">Priority</label>
+        <select id="priority" name="priority" [(ngModel)]="priority">
+          @for (p of priorities; track p) {
+            <option [value]="p">{{ priorityLabel[p] }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="assignee">Assignee</label>
+        <select
+          id="assignee"
+          name="assignee"
+          [ngModel]="assigneeId ?? ''"
+          (ngModelChange)="onAssigneeChange($event)"
+        >
+          <option value="">— unassigned —</option>
+          @for (u of users.activeUsers(); track u.id) {
+            <option [value]="u.id">{{ u.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="field">
+        <label for="team">Team</label>
+        <select id="team" name="team" [(ngModel)]="teamId">
+          <option [ngValue]="null">— none —</option>
+          @for (t of teams.teams(); track t.id) {
+            <option [ngValue]="t.id">{{ t.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="tags">Tags <span class="hint">(comma-separated)</span></label>
+      <input id="tags" type="text" name="tags" [(ngModel)]="tagsInput" placeholder="frontend, urgent" />
+    </div>
+
+    @if (errors.length) {
+      <ul class="errors">
+        @for (e of errors; track e) {
+          <li>{{ e }}</li>
+        }
+      </ul>
+    }
+
+    <div class="actions">
+      <button type="button" class="btn-ghost" (click)="close.emit()">Cancel</button>
+      <button type="submit" class="btn-primary">{{ task ? 'Save changes' : 'Create task' }}</button>
+    </div>
+  </form>
+</app-modal>

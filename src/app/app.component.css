@@ -1,50 +1,76 @@
-main {
-  width: 90%;
-  max-width: 50rem;
-  margin: 2.5rem auto;
-  display: grid;
-  grid-auto-flow: row;
-  gap: 2rem;
+.top-nav {
+  width: 92%;
+  max-width: 72rem;
+  margin: -1rem auto 0;
+  position: relative;
+  z-index: 5;
 }
 
-#users {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.nav-inner {
   display: flex;
+  gap: 0.25rem;
+  justify-content: center;
+  background: linear-gradient(180deg, #2c1f44 0%, #261a3c 100%);
+  border: 1px solid rgba(195, 179, 216, 0.15);
+  border-radius: 10px;
+  padding: 0.4rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  overflow-x: auto;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
-  overflow: auto;
+  background: transparent;
+  border: none;
+  color: #c3b3d8;
+  font: inherit;
+  font-size: 0.88rem;
+  padding: 0.55rem 1rem;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
 }
 
-#fallback {
-  font-weight: bold;
-  font-size: 1.15rem;
-  margin: 0;
-  text-align: center;
+.tab .icon { font-size: 1rem; opacity: 0.85; }
+
+.tab .count {
+  background: rgba(195, 179, 216, 0.12);
+  color: #d6c4ec;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  margin-left: 0.15rem;
+  transition: background 0.15s, color 0.15s;
 }
 
-ul {
-  list-style: none;
-  padding: 0px;
-  margin: 0;
+.tab:hover {
+  background: rgba(153, 101, 221, 0.12);
+  color: #e9dcff;
 }
 
-li {
-  padding-bottom: 10px;
+.tab.active {
+  background: linear-gradient(135deg, #9965dd 0%, #b87cf2 100%);
+  color: #150722;
+  font-weight: 600;
+  box-shadow: 0 2px 12px rgba(153, 101, 221, 0.35);
 }
 
-@media (min-width: 768px) {
-  main {
-    margin: 4rem auto;
-    grid-template-columns: 1fr 3fr;
-  }
+.tab.active .count {
+  background: rgba(11, 5, 25, 0.25);
+  color: #150722;
+}
 
-  #users {
-    flex-direction: column;
-  }
+main {
+  width: 92%;
+  max-width: 72rem;
+  margin: 1.5rem auto 3rem;
+}
 
-  #fallback {
-    font-size: 1.5rem;
-    text-align: left;
-  }
+@media (max-width: 600px) {
+  .tab .label { display: none; }
+  .tab { padding: 0.55rem 0.75rem; }
 }

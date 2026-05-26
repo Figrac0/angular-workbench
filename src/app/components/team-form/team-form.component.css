@@ -1,0 +1,58 @@
+.form { display: flex; flex-direction: column; gap: 0.85rem; }
+.field { display: flex; flex-direction: column; gap: 0.3rem; }
+
+label { font-size: 0.8rem; font-weight: 600; color: #ab9ac0; }
+
+input, textarea {
+  width: 100%;
+  font: inherit;
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid rgba(195, 179, 216, 0.18);
+  background-color: rgba(11, 5, 25, 0.5);
+  color: #e9dcff;
+  resize: vertical;
+}
+
+input:focus, textarea:focus { outline: none; border-color: #9965dd; }
+
+.colors { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.swatch {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.1s, border-color 0.15s;
+}
+
+.swatch:hover { transform: scale(1.08); }
+.swatch.selected {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+}
+
+.errors {
+  list-style: disc inside;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background-color: rgba(221, 101, 101, 0.12);
+  border: 1px solid rgba(221, 101, 101, 0.35);
+  color: #ffb2b2;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
+
+button { font: inherit; cursor: pointer; padding: 0.55rem 1.25rem; border-radius: 6px; border: none; font-weight: 600; }
+.btn-ghost { background: transparent; color: #c3b3d8; border: 1px solid rgba(195, 179, 216, 0.25); }
+.btn-ghost:hover { background: rgba(195, 179, 216, 0.08); }
+.btn-primary {
+  background: linear-gradient(135deg, #9965dd 0%, #b87cf2 100%);
+  color: #150722;
+  box-shadow: 0 2px 12px rgba(153, 101, 221, 0.4);
+}
+.btn-primary:hover { background: linear-gradient(135deg, #a877e8 0%, #c891ff 100%); }
