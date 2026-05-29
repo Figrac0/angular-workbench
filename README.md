@@ -1,7 +1,7 @@
 <div align="center">
 
 # EasyTask
-
+ 
 ### A full-featured team task management panel built on Angular 18
 
 *Plan, assign, and ship work across your team — without the friction of a real ticketing system.*
