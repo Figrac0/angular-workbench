@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "PowerShell(npx ng build --configuration=development 2>&1)",
-      "PowerShell(npm run build 2>&1)"
-    ]
-  }
-}
