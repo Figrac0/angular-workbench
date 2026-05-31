@@ -1,5 +1,36 @@
 # FinScope — Investment & Markets Toolkit
 
+---
+
+<div align="center">
+  <a href="https://angular-inv-calc.vercel.app/calculator" target="_blank">
+    <img
+      src="https://github.com/Figrac0/Figrac0/blob/main/href.svg"
+      alt="Quick Access - Visit Site"
+      width="50%"
+    />
+  </a>
+</div>
+
+---
+
+
+## 📸 Project Preview
+
+<div align="center">
+
+| 1 | 2 |
+| :---: | :---: |
+| <img src="https://github.com/Figrac0/angular-workbench/blob/Inv-Calc/public/1.png" width="400"/><br/> | <img src="https://github.com/Figrac0/angular-workbench/blob/Inv-Calc/public/2.png" width="400"/><br/> |
+
+| 3 | 4 |
+| :---: | :---: |
+| <img src="https://github.com/Figrac0/angular-workbench/blob/Inv-Calc/public/3.png" width="400"/><br/> | <img src="https://github.com/Figrac0/angular-workbench/blob/Inv-Calc/public/4.png" width="400"/><br/>|
+
+</div>
+
+---
+
 > A modern, single-page **Angular 18** finance application that turns a simple
 > compound-interest calculator into a portfolio-grade product: live
 > projections, real-time currency conversion across 30+ fiat currencies, and a
