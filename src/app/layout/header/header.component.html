@@ -1,0 +1,52 @@
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand" routerLink="/calculator" aria-label="FinScope home">
+      <span class="brand__mark">◈</span>
+      <span class="brand__name">Fin<span class="brand__accent">Scope</span></span>
+    </a>
+
+    <nav class="nav" [class.is-open]="menuOpen()" aria-label="Primary">
+      @for (link of links; track link.path) {
+        <a
+          class="nav__link"
+          [routerLink]="link.path"
+          routerLinkActive="is-active"
+          (click)="menuOpen.set(false)"
+        >
+          {{ link.label }}
+        </a>
+      }
+    </nav>
+
+    <div class="actions">
+      <app-select
+        class="currency-select"
+        title="Display currency"
+        leadingIcon="🌐"
+        [options]="currencyOptions()"
+        [searchable]="true"
+        [compact]="true"
+        [ngModel]="currencyService.displayCurrency()"
+        (ngModelChange)="onCurrencyChange($event)"
+      />
+
+      <button
+        type="button"
+        class="icon-btn"
+        (click)="toggleTheme()"
+        [attr.aria-label]="theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+      >
+        {{ theme() === 'dark' ? '☀️' : '🌙' }}
+      </button>
+
+      <button
+        type="button"
+        class="icon-btn menu-toggle"
+        (click)="toggleMenu()"
+        aria-label="Toggle navigation"
+      >
+        ☰
+      </button>
+    </div>
+  </div>
+</header>

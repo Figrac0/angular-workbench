@@ -1,0 +1,122 @@
+<section class="page-head">
+  <div>
+    <h1 class="page-title">Currency Converter</h1>
+    <p class="page-sub">
+      Real-time foreign-exchange rates from the European Central Bank, with a
+      historical trend for any pair.
+    </p>
+  </div>
+</section>
+
+<div class="conv-layout">
+  <!-- ===== Converter card ===== -->
+  <div class="panel converter-card">
+    <div class="convert-row">
+      <div class="field">
+        <label for="amount">Amount</label>
+        <input
+          id="amount"
+          type="number"
+          class="amount-input"
+          [ngModel]="amount()"
+          (ngModelChange)="onAmount($event)"
+          min="0"
+        />
+      </div>
+
+      <div class="pair">
+        <div class="field">
+          <label>From</label>
+          <app-select
+            [options]="currencyOptions()"
+            [searchable]="true"
+            [ngModel]="from()"
+            (ngModelChange)="setFrom($event)"
+          />
+        </div>
+
+        <button type="button" class="swap-btn" (click)="swap()" aria-label="Swap currencies">
+          ⇄
+        </button>
+
+        <div class="field">
+          <label>To</label>
+          <app-select
+            [options]="currencyOptions()"
+            [searchable]="true"
+            [ngModel]="to()"
+            (ngModelChange)="setTo($event)"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="result-block">
+      @if (result(); as r) {
+        <p class="result-from">{{ format(r.amount, r.from) }} =</p>
+        <p class="result-to">{{ format(r.result, r.to) }}</p>
+        <p class="result-rate">
+          1 {{ r.from }} = {{ r.rate | number: '1.4-4' }} {{ r.to }}
+          <span class="result-date">· {{ r.date }}</span>
+        </p>
+      } @else if (conversionLoading()) {
+        <app-loading message="Fetching rate…" />
+      } @else {
+        <p class="result-rate">Enter an amount to convert.</p>
+      }
+    </div>
+
+    <div class="quick-row">
+      <span class="quick-label">Quick to:</span>
+      @for (code of popular; track code) {
+        <button
+          type="button"
+          class="chip"
+          [class.is-active]="to() === code"
+          (click)="setTo(code)"
+        >
+          {{ code }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- ===== History chart ===== -->
+  <div class="panel chart-card">
+    <div class="panel__head">
+      <h2 class="panel__title">{{ from() }} → {{ to() }} history</h2>
+      <div class="range-tabs">
+        @for (r of ranges; track r.days) {
+          <button
+            type="button"
+            class="range-tab"
+            [class.is-active]="rangeDays() === r.days"
+            (click)="rangeDays.set(r.days)"
+          >
+            {{ r.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (seriesStats(); as st) {
+      <div class="series-stats">
+        <span class="badge" [class.up]="st.changePct >= 0" [class.down]="st.changePct < 0">
+          {{ st.changePct >= 0 ? '▲' : '▼' }} {{ st.changePct | number: '1.2-2' }}%
+        </span>
+        <span class="series-stats__item">Low {{ st.min | number: '1.4-4' }}</span>
+        <span class="series-stats__item">High {{ st.max | number: '1.4-4' }}</span>
+      </div>
+    }
+
+    <div class="chart chart--tall">
+      @if (seriesLoading()) {
+        <app-loading message="Loading history…" />
+      } @else if (series().length > 1) {
+        <app-chart [config]="chart()" />
+      } @else {
+        <div class="chart-empty">No historical data for this pair.</div>
+      }
+    </div>
+  </div>
+</div>

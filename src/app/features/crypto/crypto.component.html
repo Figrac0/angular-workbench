@@ -1,0 +1,188 @@
+<section class="page-head crypto-head">
+  <div>
+    <h1 class="page-title">Crypto Market</h1>
+    <p class="page-sub">
+      Live prices for the top assets by market cap, priced in
+      {{ vsCurrency() }} · auto-refreshing every minute.
+    </p>
+  </div>
+  <div class="head-actions">
+    @if (lastUpdated(); as t) {
+      <span class="updated">Updated {{ t | date: 'HH:mm:ss' }}</span>
+    }
+    <button type="button" class="btn btn--ghost" (click)="reload()">↻ Refresh</button>
+  </div>
+</section>
+
+<div class="market-totals">
+  <div class="total-pill">
+    <span class="total-pill__label">Total market cap (top 30)</span>
+    <strong>{{ formatCompact(totals().marketCap) }}</strong>
+  </div>
+  <div class="total-pill">
+    <span class="total-pill__label">24h volume</span>
+    <strong>{{ formatCompact(totals().volume) }}</strong>
+  </div>
+  <div class="total-pill">
+    <span class="total-pill__label">Assets tracked</span>
+    <strong>{{ totals().count }}</strong>
+  </div>
+</div>
+
+<!-- ===== Selected coin detail ===== -->
+@if (selectedCoin(); as coin) {
+  <div class="panel detail-panel">
+    <div class="detail-head">
+      <div class="detail-coin">
+        <img [src]="coin.image" [alt]="coin.name" class="detail-coin__img" />
+        <div>
+          <h2 class="detail-coin__name">
+            {{ coin.name }}
+            <span class="detail-coin__symbol">{{ coin.symbol.toUpperCase() }}</span>
+          </h2>
+          <div class="detail-coin__price">
+            {{ formatPrice(coin.current_price) }}
+            <span
+              class="detail-coin__change"
+              [class.pos]="coin.price_change_percentage_24h >= 0"
+              [class.neg]="coin.price_change_percentage_24h < 0"
+            >
+              {{ pct(coin.price_change_percentage_24h) }} (24h)
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="range-tabs">
+        @for (r of ranges; track r.days) {
+          <button
+            type="button"
+            class="range-tab"
+            [class.is-active]="rangeDays() === r.days"
+            (click)="rangeDays.set(r.days)"
+          >
+            {{ r.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="chart chart--tall">
+      @if (chartLoading() && !series().length) {
+        <app-loading message="Loading chart…" />
+      } @else if (series().length > 1) {
+        <app-chart [config]="chart()" />
+      } @else {
+        <div class="chart-empty">No chart data available.</div>
+      }
+    </div>
+
+    <div class="detail-stats">
+      <div><span>Market cap</span><strong>{{ formatCompact(coin.market_cap) }}</strong></div>
+      <div><span>24h volume</span><strong>{{ formatCompact(coin.total_volume) }}</strong></div>
+      <div><span>24h high</span><strong>{{ formatPrice(coin.high_24h) }}</strong></div>
+      <div><span>24h low</span><strong>{{ formatPrice(coin.low_24h) }}</strong></div>
+      <div>
+        <span>All-time high</span>
+        <strong>
+          {{ formatPrice(coin.ath) }}
+          <small
+            [class.pos]="coin.ath_change_percentage >= 0"
+            [class.neg]="coin.ath_change_percentage < 0"
+            >{{ pct(coin.ath_change_percentage) }}</small
+          >
+        </strong>
+      </div>
+      <div>
+        <span>Circulating supply</span>
+        <strong>{{ coin.circulating_supply | number: '1.0-0' }} {{ coin.symbol.toUpperCase() }}</strong>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ===== Markets table ===== -->
+<div class="panel table-panel">
+  <div class="panel__head">
+    <h2 class="panel__title">Top assets</h2>
+    <input
+      type="search"
+      class="search"
+      placeholder="Search coins…"
+      [ngModel]="search()"
+      (ngModelChange)="onSearch($event)"
+    />
+  </div>
+
+  @if (marketsLoading() && !markets().length) {
+    <app-loading message="Loading market data…" />
+  } @else if (!markets().length) {
+    <div class="chart-empty">
+      Market data is unavailable right now — try refreshing in a moment.
+    </div>
+  } @else {
+    <div class="table-scroll">
+      <table class="data-table market-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Asset</th>
+            <th class="num">Price</th>
+            <th class="num hide-sm">1h</th>
+            <th class="num">24h</th>
+            <th class="num hide-sm">7d</th>
+            <th class="num hide-md">Market cap</th>
+            <th class="trend hide-sm">7d trend</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (coin of filteredMarkets(); track coin.id) {
+            <tr
+              class="market-row"
+              [class.is-selected]="coin.id === selectedId()"
+              (click)="select(coin.id)"
+            >
+              <td class="muted">{{ coin.market_cap_rank }}</td>
+              <td>
+                <div class="asset">
+                  <img [src]="coin.image" [alt]="coin.name" class="asset__img" />
+                  <div class="asset__text">
+                    <span class="asset__name">{{ coin.name }}</span>
+                    <span class="asset__symbol">{{ coin.symbol.toUpperCase() }}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="num strong">{{ formatPrice(coin.current_price) }}</td>
+              <td
+                class="num hide-sm"
+                [class.pos]="(coin.price_change_percentage_1h_in_currency ?? 0) >= 0"
+                [class.neg]="(coin.price_change_percentage_1h_in_currency ?? 0) < 0"
+              >
+                {{ pct(coin.price_change_percentage_1h_in_currency) }}
+              </td>
+              <td
+                class="num"
+                [class.pos]="(coin.price_change_percentage_24h_in_currency ?? 0) >= 0"
+                [class.neg]="(coin.price_change_percentage_24h_in_currency ?? 0) < 0"
+              >
+                {{ pct(coin.price_change_percentage_24h_in_currency) }}
+              </td>
+              <td
+                class="num hide-sm"
+                [class.pos]="(coin.price_change_percentage_7d_in_currency ?? 0) >= 0"
+                [class.neg]="(coin.price_change_percentage_7d_in_currency ?? 0) < 0"
+              >
+                {{ pct(coin.price_change_percentage_7d_in_currency) }}
+              </td>
+              <td class="num hide-md">{{ formatCompact(coin.market_cap) }}</td>
+              <td class="trend hide-sm">
+                <div class="spark">
+                  <app-sparkline [data]="coin.sparkline_in_7d?.price ?? []" />
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

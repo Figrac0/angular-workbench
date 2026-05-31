@@ -1,0 +1,248 @@
+<section class="page-head">
+  <div>
+    <h1 class="page-title">Investment Calculator</h1>
+    <p class="page-sub">
+      Project compound growth with contributions, inflation and intra-year
+      compounding — then see the result in any currency, live.
+    </p>
+  </div>
+</section>
+
+<div class="calc-layout">
+  <!-- ============ Form ============ -->
+  <form
+    class="panel form"
+    [formGroup]="form"
+    (ngSubmit)="$event.preventDefault()"
+  >
+    <h2 class="panel__title">Parameters</h2>
+
+    <div class="field">
+      <label for="initial">Initial investment</label>
+      <app-number-field
+        id="initial"
+        formControlName="initialInvestment"
+        [prefix]="currency()"
+        [step]="1000"
+        [min]="0"
+      />
+    </div>
+
+    <div class="field">
+      <label for="annual">Annual contribution</label>
+      <app-number-field
+        id="annual"
+        formControlName="annualInvestment"
+        [prefix]="currency()"
+        [step]="500"
+        [min]="0"
+      />
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="growth">Contribution</label>
+        <app-number-field
+          id="growth"
+          formControlName="annualInvestmentGrowth"
+          suffix="%/yr"
+          [step]="0.5"
+          [min]="0"
+          [max]="100"
+        />
+      </div>
+      <div class="field">
+        <label for="return">Expected return</label>
+        <app-number-field
+          id="return"
+          formControlName="expectedReturn"
+          suffix="%/yr"
+          [step]="0.5"
+        />
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="duration">Duration</label>
+        <app-number-field
+          id="duration"
+          formControlName="duration"
+          suffix="yrs"
+          [step]="1"
+          [min]="1"
+          [max]="100"
+        />
+      </div>
+      <div class="field">
+        <label for="inflation">Inflation</label>
+        <app-number-field
+          id="inflation"
+          formControlName="inflationRate"
+          suffix="%/yr"
+          [step]="0.1"
+          [min]="0"
+        />
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Compounding</label>
+        <app-select
+          formControlName="compounding"
+          [options]="compoundingOptions"
+        />
+      </div>
+      <div class="field">
+        <label>Currency</label>
+        <app-select
+          formControlName="currency"
+          [options]="currencyOptions"
+          leadingIcon="$"
+        />
+      </div>
+    </div>
+
+    @if (form.invalid) {
+      <p class="form__error">Please enter valid, non-negative values.</p>
+    }
+
+    <div class="form__actions">
+      <button type="button" class="btn btn--ghost" (click)="reset()">
+        Reset
+      </button>
+      <button
+        type="button"
+        class="btn btn--primary"
+        (click)="exportCsv()"
+        [disabled]="!hasResults()"
+      >
+        ⬇ Export CSV
+      </button>
+    </div>
+    <p class="form__hint">Results update live as you type.</p>
+  </form>
+
+  <!-- ============ Results ============ -->
+  <div class="results">
+    @if (summary(); as s) {
+      <div class="stat-grid">
+        <app-stat-card
+          label="Final value"
+          [value]="formatCurrency(s.finalValue)"
+          accent="var(--brand)"
+        />
+        <app-stat-card
+          label="Total invested"
+          [value]="formatCurrency(s.totalContributions)"
+          accent="#60a5fa"
+        />
+        <app-stat-card
+          label="Total interest"
+          [value]="formatCurrency(s.totalInterest)"
+          accent="#fbbf24"
+          [delta]="s.roi"
+        />
+        <app-stat-card
+          label="Real value (today)"
+          [value]="formatCurrency(s.realFinalValue)"
+          accent="#a78bfa"
+          hint="Inflation-adjusted"
+        />
+      </div>
+
+      <div class="meta-row">
+        <span class="badge">CAGR {{ s.cagr.toFixed(2) }}%</span>
+        <span class="badge">ROI {{ s.roi.toFixed(1) }}%</span>
+        <span class="badge">{{ s.duration }} years</span>
+        <span class="badge">{{ s.currency }}</span>
+      </div>
+
+      <!-- Growth chart -->
+      <div class="panel chart-panel">
+        <div class="panel__head">
+          <h2 class="panel__title">Projected growth</h2>
+          <span class="panel__note">Nominal vs invested vs real value</span>
+        </div>
+        <div class="chart chart--tall">
+          <app-chart [config]="growthChart()" />
+        </div>
+      </div>
+
+      <div class="chart-duo">
+        <div class="panel chart-panel">
+          <h2 class="panel__title">Yearly contributions vs interest</h2>
+          <div class="chart">
+            <app-chart [config]="breakdownChart()" />
+          </div>
+        </div>
+        <div class="panel chart-panel">
+          <h2 class="panel__title">Final composition</h2>
+          <div class="chart">
+            <app-chart [config]="compositionChart()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Live currency conversion -->
+      @if (conversionEntries().length) {
+        <div class="panel">
+          <div class="panel__head">
+            <h2 class="panel__title">Final value in other currencies</h2>
+            <span class="panel__note">Live ECB rates</span>
+          </div>
+          <div class="conv-grid">
+            @for (entry of conversionEntries(); track entry.code) {
+              <div class="conv-chip">
+                <span class="conv-chip__code">{{ entry.code }}</span>
+                <span class="conv-chip__value">
+                  {{ formatConversion(entry.code, entry.value) }}
+                </span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Schedule table -->
+      <div class="panel table-panel">
+        <h2 class="panel__title">Year-by-year schedule</h2>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th class="num">Value</th>
+                <th class="num">Interest</th>
+                <th class="num">Total interest</th>
+                <th class="num">Invested</th>
+                <th class="num">Real value</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of rows(); track row.year) {
+                <tr>
+                  <td>{{ row.year }}</td>
+                  <td class="num strong">
+                    {{ formatCurrency(row.valueEndOfYear) }}
+                  </td>
+                  <td class="num pos">{{ formatCurrency(row.interest) }}</td>
+                  <td class="num">{{ formatCurrency(row.totalInterest) }}</td>
+                  <td class="num">
+                    {{ formatCurrency(row.totalContributions) }}
+                  </td>
+                  <td class="num muted">{{ formatCurrency(row.realValue) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    } @else {
+      <div class="panel empty">
+        <p>Enter your parameters to see the projection.</p>
+      </div>
+    }
+  </div>
+</div>

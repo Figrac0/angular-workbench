@@ -1,17 +1,378 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap');
+/* ============================================================
+   FinScope — global design system
+   Tokens, resets and reusable UI primitives shared by all pages.
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ---- Design tokens: dark (default) ---- */
+:root,
+[data-theme='dark'] {
+  --bg: #0a0e12;
+  --surface: #121821;
+  --surface-2: #1a2230;
+  --border: #243044;
+  --text: #e7edf3;
+  --text-muted: #8a97a8;
+
+  --brand: #2dd4bf;
+  --brand-strong: #14b8a6;
+  --brand-gradient: linear-gradient(135deg, #2dd4bf, #38bdf8);
+  --brand-soft: rgba(45, 212, 191, 0.1);
+
+  --success: #34d399;
+  --danger: #f87171;
+
+  --radius: 14px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 24px 50px -28px rgba(0, 0, 0, 0.7);
+}
+
+/* ---- Design tokens: light ---- */
+[data-theme='light'] {
+  --bg: #f3f6fb;
+  --surface: #ffffff;
+  --surface-2: #eef2f7;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --text-muted: #64748b;
+
+  --brand: #0d9488;
+  --brand-strong: #0f766e;
+  --brand-gradient: linear-gradient(135deg, #14b8a6, #0ea5e9);
+  --brand-soft: rgba(13, 148, 136, 0.08);
+
+  --success: #059669;
+  --danger: #dc2626;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 24px 50px -28px rgba(15, 23, 42, 0.25);
+}
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  background-image: radial-gradient(
+      900px 500px at 85% -5%,
+      color-mix(in srgb, var(--brand) 12%, transparent),
+      transparent
+    ),
+    radial-gradient(
+      700px 400px at 0% 0%,
+      color-mix(in srgb, #38bdf8 9%, transparent),
+      transparent
+    );
+  background-attachment: fixed;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: radial-gradient(#303b37, #1a1f1d);
-  color: #e1eeeb;
-  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--brand) 35%, transparent);
+}
+
+/* Consistent, premium focus ring across interactive elements */
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--brand) 70%, transparent);
+  outline-offset: 2px;
+}
+button {
+  font-family: inherit;
+}
+
+/* ---- Form controls ---- */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent);
+}
+select option {
+  color: #111;
+}
+input[type='number'] {
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ---- Page header ---- */
+.page-head {
+  margin-bottom: 1.75rem;
+}
+.page-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.85rem;
+  font-weight: 800;
+}
+.page-sub {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--text-muted);
+  font-size: 0.96rem;
+  line-height: 1.5;
+}
+
+/* ---- Panels / cards ---- */
+.panel {
+  padding: 1.35rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 4%, transparent);
+}
+.panel__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.panel__note {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.15s ease, opacity 0.15s ease;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn--primary {
+  background: var(--brand-gradient);
+  color: #04140f;
+  box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--brand) 80%, transparent);
+}
+.btn--primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+  box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--brand) 90%, transparent);
+}
+.btn--ghost {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text);
+}
+.btn--ghost:hover:not(:disabled) {
+  background: var(--surface);
+}
+
+/* ---- Badges ---- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.badge.up {
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 14%, transparent);
+  border-color: transparent;
+}
+.badge.down {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+  border-color: transparent;
+}
+
+/* ---- Charts ---- */
+.chart {
+  position: relative;
+  width: 100%;
+  height: 280px;
+}
+.chart--tall {
+  height: 340px;
+}
+.chart-empty {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* ---- Segmented range tabs ---- */
+.range-tabs {
+  display: inline-flex;
+  gap: 0.2rem;
+  padding: 0.25rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+}
+.range-tab {
+  padding: 0.35rem 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+.range-tab:hover {
+  color: var(--text);
+}
+.range-tab.is-active {
+  background: var(--surface);
+  color: var(--brand);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---- Pill chips (quick selectors) ---- */
+.chip {
+  padding: 0.34rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.chip:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--brand) 40%, var(--border));
+}
+.chip.is-active {
+  background: var(--brand-soft);
+  border-color: color-mix(in srgb, var(--brand) 45%, transparent);
+  color: var(--brand);
+}
+
+/* ---- Data tables ---- */
+.table-panel {
+  padding-bottom: 0.5rem;
+}
+.table-scroll {
+  overflow-x: auto;
+  margin: 0 -0.35rem;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.data-table th {
+  position: sticky;
+  top: 0;
+  text-align: left;
+  padding: 0.6rem 0.7rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  font-weight: 600;
+  background: var(--surface);
+}
+.data-table td {
+  padding: 0.6rem 0.7rem;
+  border-top: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+}
+.data-table .num {
+  text-align: right;
+}
+.data-table .strong {
+  font-weight: 700;
+}
+.muted {
+  color: var(--text-muted);
+}
+.pos {
+  color: var(--success);
+}
+.neg {
+  color: var(--danger);
+}
+
+/* ---- Scrollbars ---- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 .center {
